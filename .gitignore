@@ -86,3 +86,5 @@ ENV/
 .pytest_cache
 .postgres
 *.sqlite
+.tool-versions
+.python-version
