@@ -11,6 +11,7 @@ version = "0.1.0"
 
 [tool.poetry.dependencies]
 pydantic = "^2.6.4"
+pydantic-settings = "^2.2.1"
 python = "^3.12"
 python-telegram-bot = "^21.0.1"
 redis = "^5.0.3"
