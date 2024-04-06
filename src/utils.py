@@ -4,17 +4,25 @@ from typing import cast
 from db import KeysEnum, get_redis_key
 from extra_types import MessageText
 from redis.asyncio import Redis
-from telegram import Chat, Message, Update, User
+from telegram import CallbackQuery, Chat, Message, Update, User
 
 EXPECTED_FORMAT = Template("Неверный формат ввода, ожидаемый формат:\n ${expected}")
 
 
-def cast_defaults(update: Update) -> tuple[Chat, Message, MessageText, User]:
+def cast_defaults_command(update: Update) -> tuple[Chat, Message, MessageText, User]:
     effective_chat = cast("Chat", update.effective_chat)
     message = cast("Message", update.message)
     in_text = cast(MessageText, message.text)
     user = cast("User", message.from_user)
     return effective_chat, message, in_text, user
+
+
+def cast_defaults_callback(update: Update) -> tuple[Chat, CallbackQuery, Message, str, User]:
+    effective_chat = cast("Chat", update.effective_chat)
+    query = cast("CallbackQuery", update.callback_query)
+    message = cast("Message", query.message)
+    data = cast(str, query.data)
+    return effective_chat, query, message, data, query.from_user
 
 
 async def check_auth(chat_id: str | int, redis: Redis) -> bool:

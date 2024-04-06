@@ -5,6 +5,7 @@ from config import settings
 from db import KeysEnum, get_redis_key
 from extra_types import Location, MessageText
 from handlers.base_command import CommandException
+from handlers.const import CallbackEnum
 from handlers.meeting.base import BaseMeetingCommand, BaseParticipateMeetingCommand
 from models import Meeting, MeetingList, Participant
 from redis.asyncio import Redis
@@ -96,19 +97,13 @@ class ParticipateMeetingCommand(BaseParticipateMeetingCommand):
     """Команда для добавления пользователя как участника встречи"""
 
     COMMAND = "plan_part"
-    FORMAT = "/plan_part id-встречи"
-
-    @classmethod
-    def special_act(cls, meeting: Meeting, as_participant: Participant) -> None:
-        meeting.participants.add(as_participant)
+    CALLBACK_TYPE = CallbackEnum.meeting_participate
+    MESSAGE = "Выбери, куда придешь:"
 
 
 class LeaveMeetingCommand(BaseParticipateMeetingCommand):
     """Команда для удаления пользователя как участника встречи"""
 
     COMMAND = "plan_leave"
-    FORMAT = "/plan_leave id-встречи"
-
-    @classmethod
-    def special_act(cls, meeting: Meeting, as_participant: Participant) -> None:
-        meeting.participants.remove(as_participant)
+    CALLBACK_TYPE = CallbackEnum.meeting_leave
+    MESSAGE = "Выбери, куда не придешь:"

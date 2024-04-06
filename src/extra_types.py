@@ -1,7 +1,9 @@
-from typing import TYPE_CHECKING, Annotated, NewType
+from typing import TYPE_CHECKING, Annotated, Callable, Coroutine, NewType
 from uuid import UUID, uuid4
 
 from pydantic import Field
+from redis.asyncio import Redis
+from telegram import Chat, Message, User
 
 if TYPE_CHECKING:
     from models import Participant
@@ -17,3 +19,4 @@ Participants = Annotated[
         serialization_alias="Участники",
     ),
 ]
+MeetingCallback = Callable[[Chat, Message, str, User, Redis], Coroutine]

@@ -3,11 +3,11 @@ from db import KeysEnum, get_redis_key, redis_connection
 from models import ChatGroup
 from telegram import Update
 from telegram.ext import ContextTypes
-from utils import cast_defaults, check_auth
+from utils import cast_defaults_command, check_auth
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    effective_chat, message, in_text, _ = cast_defaults(update)
+    effective_chat, message, in_text, _ = cast_defaults_command(update)
     redis_key = get_redis_key(KeysEnum.chat_info, chat_id=effective_chat.id)
 
     async with redis_connection() as redis:
@@ -31,11 +31,11 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 
 async def help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    from handlers import registry
+    from handlers import commands
 
-    _, message, _, _ = cast_defaults(update)
+    _, message, _, _ = cast_defaults_command(update)
     text = "Используй /start, чтобы авторизоваться и продолжить."
-    for handler in registry:
+    for handler in commands:
         if (command_class := getattr(handler.callback, "__self__", None)) is None:
             continue
         text += f"\n\nКоманда /{next(iter(handler.commands))}: {command_class.__doc__}. "

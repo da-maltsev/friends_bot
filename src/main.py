@@ -13,7 +13,7 @@ logging.basicConfig(
 if __name__ == "__main__":
     application = ApplicationBuilder().token(settings.TG_TOKEN).build()
 
-    for command_handler in handlers.registry:
-        application.add_handler(command_handler)
+    for handler in handlers.registry:
+        application.add_handler(handler)
 
     application.run_polling()

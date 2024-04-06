@@ -5,7 +5,7 @@ from extra_types import MessageText
 from redis.asyncio import Redis
 from telegram import Chat, Message, Update, User
 from telegram.ext import ContextTypes
-from utils import cast_defaults, check_auth
+from utils import cast_defaults_command, check_auth
 
 
 class CommandException(Exception):
@@ -30,7 +30,7 @@ class BaseCommand(ABC):
 
     @classmethod
     async def run(cls, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-        effective_chat, message, text, user = cast_defaults(update)
+        effective_chat, message, text, user = cast_defaults_command(update)
 
         async with redis_connection() as redis:
             is_logged = await check_auth(effective_chat.id, redis)

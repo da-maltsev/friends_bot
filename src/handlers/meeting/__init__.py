@@ -3,6 +3,8 @@ __all__ = (
     "ListMeetingCommand",
     "ParticipateMeetingCommand",
     "LeaveMeetingCommand",
+    "CALLBACK_MAPPING",
 )
 
-from handlers.meeting.meeting import AddMeetingCommand, LeaveMeetingCommand, ListMeetingCommand, ParticipateMeetingCommand
+from handlers.meeting.callbacks import CALLBACK_MAPPING
+from handlers.meeting.commands import AddMeetingCommand, LeaveMeetingCommand, ListMeetingCommand, ParticipateMeetingCommand

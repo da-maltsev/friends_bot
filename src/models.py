@@ -58,6 +58,9 @@ class Meeting(BaseModel):
         hash_string = f"{self.location}{self.date}{self.title}"
         return int(hashlib.md5(hash_string.encode()).hexdigest(), 16)
 
+    def as_button(self) -> str:
+        return f"{self.title} - {self.date.strftime('%d-%m, %H:%M')}"
+
 
 class MeetingList(BaseModel):
     meetings: Annotated[
