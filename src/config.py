@@ -1,5 +1,7 @@
-from pydantic import RedisDsn, computed_field
+import pytz
+from pydantic import computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from pytz.tzinfo import StaticTzInfo
 
 
 class Settings(BaseSettings):
@@ -19,14 +21,10 @@ class Settings(BaseSettings):
 
     TG_TOKEN: str
 
-    @computed_field
-    def redis_dsn(self) -> RedisDsn:
-        return RedisDsn.build(
-            scheme="redis",
-            password=self.REDIS_PASSWORD,
-            host=self.REDIS_HOST,
-            port=self.REDIS_PORT,
-        )
+    @computed_field  # type: ignore[misc]
+    @property
+    def tz_info(self) -> StaticTzInfo:
+        return pytz.timezone("Asia/Yekaterinburg")
 
 
 settings = Settings()  # type: ignore

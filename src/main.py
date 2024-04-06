@@ -1,6 +1,6 @@
 import logging
 
-import commands
+import handlers
 from config import settings
 from telegram.ext import ApplicationBuilder
 
@@ -13,7 +13,7 @@ logging.basicConfig(
 if __name__ == "__main__":
     application = ApplicationBuilder().token(settings.TG_TOKEN).build()
 
-    for command_handler in commands.registry:
+    for command_handler in handlers.registry:
         application.add_handler(command_handler)
 
     application.run_polling()

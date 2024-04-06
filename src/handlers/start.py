@@ -7,7 +7,7 @@ from utils import cast_defaults, check_auth
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    effective_chat, message, in_text = cast_defaults(update)
+    effective_chat, message, in_text, _ = cast_defaults(update)
     redis_key = get_redis_key(KeysEnum.chat_info, chat_id=effective_chat.id)
 
     async with redis_connection() as redis:
@@ -28,3 +28,18 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         await redis.set(redis_key, new_chat_info.model_dump_json())
 
     await context.bot.send_message(chat_id=effective_chat.id, text=text)
+
+
+async def help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    from handlers import registry
+
+    _, message, _, _ = cast_defaults(update)
+    text = "Используй /start, чтобы авторизоваться и продолжить."
+    for handler in registry:
+        if (command_class := getattr(handler.callback, "__self__", None)) is None:
+            continue
+        text += f"\n\nКоманда /{next(iter(handler.commands))}: {command_class.__doc__}. "
+        if (expected_format := getattr(command_class, "FORMAT", None)) is not None:
+            text += f"Ожидаемый формат:\n{expected_format}"
+
+    await message.reply_text(text)

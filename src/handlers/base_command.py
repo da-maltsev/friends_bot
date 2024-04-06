@@ -3,9 +3,13 @@ from abc import ABC, abstractmethod
 from db import redis_connection
 from extra_types import MessageText
 from redis.asyncio import Redis
-from telegram import Chat, Message, Update
+from telegram import Chat, Message, Update, User
 from telegram.ext import ContextTypes
 from utils import cast_defaults, check_auth
+
+
+class CommandException(Exception):
+    pass
 
 
 class BaseCommand(ABC):
@@ -21,12 +25,15 @@ class BaseCommand(ABC):
 
     @classmethod
     async def run(cls, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-        effective_chat, message, text = cast_defaults(update)
+        effective_chat, message, text, user = cast_defaults(update)
 
         async with redis_connection() as redis:
             is_logged = await check_auth(effective_chat.id, redis)
             if is_logged:
-                await cls.act(update, context, effective_chat, message, text, redis)
+                try:
+                    await cls.act(update, context, effective_chat, message, text, user, redis)
+                except CommandException as e:
+                    await context.bot.send_message(chat_id=effective_chat.id, text=str(e))
             else:
                 await context.bot.send_message(
                     chat_id=effective_chat.id,
@@ -42,6 +49,6 @@ class BaseCommand(ABC):
         chat: Chat,
         message: Message,
         text: MessageText,
+        user: User,
         redis: Redis,
-    ) -> None:
-        return
+    ) -> None: ...

@@ -20,11 +20,13 @@ async def redis_connection() -> AsyncGenerator[redis.Redis, None]:
 class KeysEnum(str, Enum):
     meeting = auto()
     chat_info = auto()
+    meeting_list = auto()
 
 
 KEY_TEMPLATES: dict[KeysEnum, Template] = {
-    KeysEnum.meeting: Template("${chat_id}-meetings-${meeting_id}"),
     KeysEnum.chat_info: Template("${chat_id}-chat_info"),
+    KeysEnum.meeting: Template("${chat_id}-meetings-${meeting_id}"),
+    KeysEnum.meeting_list: Template("${chat_id}-meeting_list"),
 }
 
 
