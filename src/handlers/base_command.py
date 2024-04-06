@@ -23,6 +23,11 @@ class BaseCommand(ABC):
     )
     """
 
+    @classmethod  # type: ignore[misc]
+    @property
+    @abstractmethod
+    def COMMAND(cls) -> str: ...
+
     @classmethod
     async def run(cls, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         effective_chat, message, text, user = cast_defaults(update)
