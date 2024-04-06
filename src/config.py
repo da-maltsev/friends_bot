@@ -11,7 +11,6 @@ class Settings(BaseSettings):
 
     DEBUG: bool = True
 
-    IS_LOGGED_IN: bool = False
     BOT_PASSWORD: str
 
     REDIS_HOST: str
