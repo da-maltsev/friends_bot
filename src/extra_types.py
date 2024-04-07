@@ -19,4 +19,5 @@ Participants = Annotated[
         serialization_alias="Участники",
     ),
 ]
-MeetingCallback = Callable[[Chat, Message, str, User, Redis], Coroutine]
+Callback = Callable[[Chat, Message, User, Redis], Coroutine]
+DetailedCallback = Callable[[Chat, Message, User, Redis, str], Coroutine]

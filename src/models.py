@@ -4,7 +4,7 @@ from typing import Annotated, Self
 
 from config import settings
 from extra_types import AutoUUID, Location, Participants
-from pydantic import BaseModel, Field, field_serializer
+from pydantic import BaseModel, Field, field_serializer, field_validator
 from telegram import User
 from utils import safe_str
 
@@ -16,6 +16,9 @@ class Participant(BaseModel):
 
     def __str__(self) -> str:
         return f"{self.first_name} {self.last_name} (@{self.username})"
+
+    def as_button(self) -> str:
+        return f"@{self.username}"
 
     def __hash__(self) -> int:
         hash_string = f"{self.first_name}{self.last_name}{self.username}"
@@ -42,24 +45,21 @@ class Meeting(BaseModel):
     def serialize_id(self, value: AutoUUID) -> str:
         return str(value)
 
-    def __str__(self) -> str:
-        location = self.location if self.location else "Место не указано"
-        participants = [str(participant) for participant in self.participants]
-        return f"""
-        #{self.title.capitalize().replace(" ", "_")} :
-          ID: {self.id}
-          Дата: {datetime.strftime(self.date, "%d-%m-%Y, %H:%M")}
-          Место: {location}
-          Предложил: {self.initiator}
-          Участники: {participants}
-        """
+    @classmethod
+    @field_validator("date", mode="before")
+    def validate_date(cls, value: datetime) -> datetime:
+        value.replace(tzinfo=settings.tz_info)
+        if value < datetime.now(tz=settings.tz_info):
+            raise ValueError(f"Введена уже прошедшая дата: {value.strftime('%d-%m, %H:%M')}")
+        return value
+
+    def as_button(self) -> str:
+        location = self.location if self.location else "?"
+        return f"{self.title.capitalize()} - {datetime.strftime(self.date, "%d-%m, %H:%M")} - {location} "
 
     def __hash__(self) -> int:
         hash_string = f"{self.location}{self.date}{self.title}"
         return int(hashlib.md5(hash_string.encode()).hexdigest(), 16)
-
-    def as_button(self) -> str:
-        return f"{self.title} - {self.date.strftime('%d-%m, %H:%M')}"
 
 
 class MeetingList(BaseModel):
@@ -76,6 +76,9 @@ class MeetingList(BaseModel):
         filtered_meetings = {id: elem for id, elem in self.meetings.items() if elem.date > datetime.now(tz=settings.tz_info)}
         self.meetings = filtered_meetings
         return self
+
+    def get_sorted_by_date_meetings(self) -> list[Meeting]:
+        return sorted(self.meetings.values(), key=lambda x: x.date)
 
     def check_new_meeting_in_list(self, meeting: Meeting) -> bool:
         return hash(meeting) in {hash(meeting) for meeting in self.meetings.values()}

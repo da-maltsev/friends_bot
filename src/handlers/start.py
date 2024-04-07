@@ -1,12 +1,14 @@
 from config import settings
 from db import KeysEnum, get_redis_key, redis_connection
+from handlers.const import MAIN_MENU_KEYBOARD
 from models import ChatGroup
-from telegram import Update
+from telegram import InlineKeyboardMarkup, Update
 from telegram.ext import ContextTypes
 from utils import cast_defaults_command, check_auth
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Команда для авторизации и начала взаимодействия с ботом"""
     effective_chat, message, in_text, _ = cast_defaults_command(update)
     redis_key = get_redis_key(KeysEnum.chat_info, chat_id=effective_chat.id)
 
@@ -31,15 +33,24 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 
 async def help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Выводит справку по командам"""
     from handlers import commands
 
     _, message, _, _ = cast_defaults_command(update)
-    text = "Используй /start, чтобы авторизоваться и продолжить."
+    texts = []
+    i = 0
     for handler in commands:
-        if (command_class := getattr(handler.callback, "__self__", None)) is None:
+        if (docstring := getattr(handler.callback, "__doc__", None)) is None:
             continue
-        text += f"\n\nКоманда /{next(iter(handler.commands))}: {command_class.__doc__}. "
-        if (expected_format := getattr(command_class, "FORMAT", None)) is not None:
-            text += f"Ожидаемый формат:\n{expected_format}"
+        i += 1
+        texts.append(f"{i}. Команда /{next(iter(handler.commands))}: {docstring}.\n")
 
-    await message.reply_text(text)
+    await message.reply_text("".join(texts))
+
+
+async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Главное меню бота с основным функционалом"""
+    effective_chat, message, in_text, _ = cast_defaults_command(update)
+
+    keyboard = InlineKeyboardMarkup(inline_keyboard=MAIN_MENU_KEYBOARD)
+    await message.reply_text("Что хочешь?", reply_markup=keyboard)
