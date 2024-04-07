@@ -15,7 +15,6 @@ from utils import cast_defaults_command
 
 
 async def add_meeting(update: Update, context: ContextTypes.DEFAULT_TYPE) -> AddMeetingEnum:
-    """Starts the conversation and asks the user about their gender."""
     effective_chat, message, in_text, user = cast_defaults_command(update)
     reply_keyboard = []
     row: list = []
