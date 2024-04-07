@@ -57,6 +57,17 @@ class Meeting(BaseModel):
         location = self.location if self.location else "?"
         return f"{self.title.capitalize()} - {datetime.strftime(self.date, "%d-%m, %H:%M")} - {location} "
 
+    def as_detailed(self) -> str:
+        location = self.location if self.location else "Место не указано"
+        participants = "\n".join(str(participant) for participant in self.participants)
+        return f"""
+          {self.title.capitalize()}
+          Дата: {datetime.strftime(self.date, "%d-%m, %H:%M")}
+          Место: {location}
+          Предложил: {self.initiator}
+          Участники: {participants}
+        """
+
     def __hash__(self) -> int:
         hash_string = f"{self.location}{self.date}{self.title}"
         return int(hashlib.md5(hash_string.encode()).hexdigest(), 16)

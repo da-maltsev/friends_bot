@@ -38,7 +38,7 @@ async def add_meeting(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Add
     async with redis_connection() as redis, asyncio.TaskGroup() as tg:
         tg.create_task(
             message.reply_text(
-                "Давай выберем тему, либо можешь написать свой вариант и отправить",
+                "Давай выберем тему, либо можешь написать свой вариант и отправить. Если передумал, используй /cancel",
                 reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True, input_field_placeholder="Какая тема?"),
             )
         )
@@ -70,7 +70,7 @@ async def meeting_month(update: Update, context: ContextTypes.DEFAULT_TYPE) -> A
         async with asyncio.TaskGroup() as tg:
             tg.create_task(
                 message.reply_text(
-                    "Давай выберем месяц",
+                    "Давай выберем месяц. Если передумал, используй /cancel",
                     reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True, input_field_placeholder="В каком месяце?"),
                 )
             )
@@ -104,7 +104,7 @@ async def meeting_day(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Add
         async with asyncio.TaskGroup() as tg:
             tg.create_task(
                 message.reply_text(
-                    f"Давай выберем в какой день {in_text}",
+                    f"Давай выберем в какой день {in_text}. Если передумал, используй /cancel",
                     reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True, input_field_placeholder="В какой день месяца?"),
                 )
             )
@@ -129,7 +129,7 @@ async def meeting_hour(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Ad
         async with asyncio.TaskGroup() as tg:
             tg.create_task(
                 message.reply_text(
-                    f"Давай выберем в какой час {new_meeting.date.strftime('%d-%m')}",
+                    f"Давай выберем в какой час {new_meeting.date.strftime('%d-%m')}. Если передумал, используй /cancel",
                     reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True, input_field_placeholder="В какой час?"),
                 )
             )
@@ -155,7 +155,7 @@ async def meeting_minute(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         async with asyncio.TaskGroup() as tg:
             tg.create_task(
                 message.reply_text(
-                    f"Давай уточним минуты начала {new_meeting.date.strftime('%d-%m, %H')}",
+                    f"Давай уточним минуты начала {new_meeting.date.strftime('%d-%m, %H')}. Если передумал, используй /cancel",
                     reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True, input_field_placeholder="Во сколько минут начнем?"),
                 )
             )
@@ -185,7 +185,7 @@ async def meeting_location(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         async with asyncio.TaskGroup() as tg:
             tg.create_task(
                 message.reply_text(
-                    f"А где встретимся {new_meeting.date.strftime('%d-%m, %H:%M')}? Можешь ввести свой вариант.",
+                    f"А где встретимся {new_meeting.date.strftime('%d-%m, %H:%M')}? Можешь ввести свой вариант. Если передумал, используй /cancel",
                     reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True, input_field_placeholder="Какое место?"),
                 )
             )
@@ -233,11 +233,12 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     return ConversationHandler.END
 
 
+ignore_commands_regex = "^(?!/)."
 STATES = {
-    AddMeetingEnum.title: [MessageHandler(filters.TEXT, meeting_month)],
-    AddMeetingEnum.month: [MessageHandler(filters.TEXT, meeting_day)],
-    AddMeetingEnum.day: [MessageHandler(filters.TEXT, meeting_hour)],
-    AddMeetingEnum.hour: [MessageHandler(filters.TEXT, meeting_minute)],
-    AddMeetingEnum.minute: [MessageHandler(filters.TEXT, meeting_location)],
-    AddMeetingEnum.location: [MessageHandler(filters.TEXT, meeting_save)],
+    AddMeetingEnum.title: [MessageHandler(filters.Regex(ignore_commands_regex), meeting_month)],
+    AddMeetingEnum.month: [MessageHandler(filters.Regex(ignore_commands_regex), meeting_day)],
+    AddMeetingEnum.day: [MessageHandler(filters.Regex(ignore_commands_regex), meeting_hour)],
+    AddMeetingEnum.hour: [MessageHandler(filters.Regex(ignore_commands_regex), meeting_minute)],
+    AddMeetingEnum.minute: [MessageHandler(filters.Regex(ignore_commands_regex), meeting_location)],
+    AddMeetingEnum.location: [MessageHandler(filters.Regex(ignore_commands_regex), meeting_save)],
 }

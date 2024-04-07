@@ -6,11 +6,14 @@ from handlers.const import CallbackEnum, DetailedCallbackEnum
 DETAILED_CALLBACK_TEMPLATE: dict[DetailedCallbackEnum, Template] = {
     DetailedCallbackEnum.participate_meeting_id: Template(DetailedCallbackEnum.participate_meeting_id + "|${meeting_id}"),
     DetailedCallbackEnum.leave_meeting_id: Template(DetailedCallbackEnum.leave_meeting_id + "|${meeting_id}"),
+    DetailedCallbackEnum.retrieve_meeting_id: Template(DetailedCallbackEnum.retrieve_meeting_id + "|${meeting_id}"),
+    DetailedCallbackEnum.delete_meeting_id: Template(DetailedCallbackEnum.delete_meeting_id + "|${meeting_id}"),
 }
 
 COMMON_CALLBACK_TO_DETAILED: dict[CallbackEnum, DetailedCallbackEnum] = {
     CallbackEnum.participate_meeting: DetailedCallbackEnum.participate_meeting_id,
     CallbackEnum.leave_meeting: DetailedCallbackEnum.leave_meeting_id,
+    CallbackEnum.retrieve_meeting: DetailedCallbackEnum.retrieve_meeting_id,
 }
 
 
