@@ -39,13 +39,6 @@ ignore = [
     "ANN102",  # missing type annotation for `cls` in classmethod
     "ANN401",  # dynamically typed expressions (typing.Any) are disallowed in `{}`
     "ARG001",  # unused function argument: `{}`
-    "ARG002",  # unused method argument: `{}`
-    "ARG003",  # unused class method argument: `{}`
-    "ARG005",  # unused lambda argument: `{}`
-    "B018",  # found useless expression. Either assign it to a variable or remove it
-    "B904",  # within an `except` clause, raise exceptions with [...]
-    "B904",  # use `raise from` to specify exception cause
-    "C408",  # unnecessary `dict` call (rewrite as a literal)
     "COM812",  # trailing comma missing
     "COM819",  # trailing comma prohibited
     "D100",  # missing docstring in public module
@@ -60,33 +53,18 @@ ignore = [
     "D202",  # no blank lines allowed after function docstring (found {})
     "D203",  # 1 blank line required before class docstring
     "D205",  # 1 blank line required between summary line and description
-    "D209",  # multi-line docstring closing quotes should be on a separate line
-    "D210",  # no whitespaces allowed surrounding docstring text
-    "D212",  # multi-line docstring summary should start at the first line
     "D213",  # multi-line docstring summary should start at the second line
     "D400",  # first line should end with a period
     "D401",  # first line of docstring should be in imperative mood: "{}"
-    "D404",  # first word of the docstring should not be "This"
     "D415",  # first line should end with a period, question mark, or exclamation point
-    "DJ007",  # do not use `__all__` with `ModelForm`, use `fields` instead
-    "DTZ001",  # the use of `datetime.datetime()` without `tzinfo` argument is not allowed
-    "E501",  # line too long ({} > {})
     "EM101",  # exception must not use a string literal, assign to variable first
     "EM102",  # expection must not use an f-string literal, assign to variable first
-    "F811",  # redefinition of unused `{}` from line {}
     "FBT001",  # boolean-typed position argument in function definition
     "FBT002",  # boolean default position argument in function definition
-    "FBT003",  # boolean positional value in function call
     "INP001",  # file `{}` is part of an implicit namespace package. Add an `__init__.py`
     "INT001",  # f-string is resolved before function call; consider `_("string %s") % arg`
     "ISC001",  # implicitly concatenated string literals on one line
-    "N802",  # function name `{}` should be lowercase
-    "N803",  # argument name `{}` should be lowercase
-    "N804",  # first argument of a class method should be named `cls`
-    "N806",  # variable `{}` in function should be lowercase
-    "N812",  # lowercase `{}` imported as non-lowercase `{}`
     "N818",  # exception name `{}` should be named with an Error suffix
-    "N999",  # invalid module name: '{}'
     "PERF401",  # use a list comprehension to create a transformed list
     "PGH003",  # use specific rule codes when ignoring type issues
     "PGH004",  # use specific rule codes when using `noqa`
@@ -111,31 +89,10 @@ ignore = [
     "RSE102",  # unnecessary parentheses on raised exception
     "RUF001",  # string contains ambiguous `{}` [...]
     "RUF002",  # docstring contains ambiguous `{}` [...]
-    "RUF005",  # consider iterable unpacking instead of concatenation"
-    "RUF009",  # do not perform function call `{}` in dataclass defaults
-    "RUF012",  # mutable class attributes should be annotated with `typing.ClassVar`
-    "RUF015",  # prefer next({iterable}) over single element slice
-    "RUF100",  # unused `noqa` directive (unknown: `{}`)
     "S101",  # use of `assert` detected
-    "S105",  # possible hardcoded password assigned to: "{}"
-    "S105",  # possible hardcoded password assigned to: "{}"
-    "S106",  # possible hardcoded password assigned to argument: "{}"
-    "S308",  # use of `mark_safe` may expose cross-site scripting vulnerabilities
-    "S311",  # standart pseudo-random generators are not suitable for cryptographic purposes
     "S324",  # probable use of insecure hash functions in `{}`: `{}`
-    "SIM102",  # use a single `if` statement instead of nested `if` statements
-    "SIM108",  # use ternary operator `{}` instead of `if`-`else`-block
-    "SIM300",  # yoda conditions are discouraged, use `{}` instead
-    "SLF001",  # private member accessed: `{}`
-    "TCH001",  # move application import `{}` into a type-checking block
-    "TCH002",  # move third-party import `{}` into a type-checking block
-    "TCH003",  # move standart library import `{}` into a type-checking block
     "TRY003",  # avoid specifying long messages outside the exception class
-    "TRY300",  # consider moving this statement to an `else` block
-    "UP006",  # use `{}` instead of `{}` for type annotation
     "UP015",  # unnecessary open mode parameters
-    "UP017",  # use `datetime.UTC` alias
-    "UP035",  # `{}` is deprecated, use `{}` instead
 ]
 select = ["ALL"]
 

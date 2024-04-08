@@ -42,7 +42,7 @@ async def _do_meeting(
         )
 
 
-async def _do_meeting_chose(chat: Chat, message: Message, user: User, redis: Redis, callback_type: CallbackEnum) -> None:
+async def _do_meeting_choose(chat: Chat, message: Message, user: User, redis: Redis, callback_type: CallbackEnum) -> None:
     meeting_list = await get_meetings_list(redis, chat.id)
     as_participant = Participant.from_user(user)
     detailed_callback = COMMON_CALLBACK_TO_DETAILED[callback_type]
@@ -64,7 +64,7 @@ async def _do_meeting_chose(chat: Chat, message: Message, user: User, redis: Red
     await message.edit_text(f"Выбери куда {special_message}:", reply_markup=keyboard)
 
 
-async def delete_meeting_chose(chat: Chat, message: Message, user: User, redis: Redis) -> None:
+async def delete_meeting_choose(chat: Chat, message: Message, user: User, redis: Redis) -> None:
     meeting_list = await get_meetings_list(redis, chat.id)
     as_participant = Participant.from_user(user)
 
@@ -83,12 +83,12 @@ async def delete_meeting_chose(chat: Chat, message: Message, user: User, redis: 
     await message.edit_text("Выбер какую встречу ты хочешь отменить:", reply_markup=keyboard)
 
 
-async def participate_meeting_chose(chat: Chat, message: Message, user: User, redis: Redis) -> None:
-    await _do_meeting_chose(chat=chat, message=message, user=user, redis=redis, callback_type=CallbackEnum.participate_meeting)
+async def participate_meeting_choose(chat: Chat, message: Message, user: User, redis: Redis) -> None:
+    await _do_meeting_choose(chat=chat, message=message, user=user, redis=redis, callback_type=CallbackEnum.participate_meeting)
 
 
-async def leave_meeting_chose(chat: Chat, message: Message, user: User, redis: Redis) -> None:
-    await _do_meeting_chose(chat=chat, message=message, user=user, redis=redis, callback_type=CallbackEnum.leave_meeting)
+async def leave_meeting_choose(chat: Chat, message: Message, user: User, redis: Redis) -> None:
+    await _do_meeting_choose(chat=chat, message=message, user=user, redis=redis, callback_type=CallbackEnum.leave_meeting)
 
 
 async def participate_meeting(chat: Chat, message: Message, user: User, redis: Redis, meeting_id: str) -> None:
@@ -116,10 +116,7 @@ async def leave_meeting(chat: Chat, message: Message, user: User, redis: Redis, 
 async def retrieve_meeting(chat: Chat, message: Message, user: User, redis: Redis, meeting_id: str) -> None:
     meeting = await get_meeting(redis, chat.id, UUID(meeting_id))
     meetings_as_buttons = [*BASE_INLINE, [InlineKeyboardButton(text="Назад", callback_data=CallbackEnum.list_meetings)]]
-    if meeting:
-        text_out = meeting.as_detailed()
-    else:
-        text_out = "Мероприятие не найдено"
+    text_out = meeting.as_detailed() if meeting else "Мероприятие не найдено"
     keyboard = InlineKeyboardMarkup(inline_keyboard=meetings_as_buttons)
     await message.edit_text(text_out, reply_markup=keyboard)
 
@@ -174,11 +171,11 @@ DETAILED_CALLBACK_MAPPING: dict[DetailedCallbackEnum, DetailedCallback] = {
 }
 
 COMMON_CALLBACK_MAPPING: dict[CallbackEnum, Callback] = {
-    CallbackEnum.participate_meeting: participate_meeting_chose,
-    CallbackEnum.leave_meeting: leave_meeting_chose,
+    CallbackEnum.participate_meeting: participate_meeting_choose,
+    CallbackEnum.leave_meeting: leave_meeting_choose,
     CallbackEnum.list_meetings: list_meetings,
     CallbackEnum.add_meeting: add_meeting,
-    CallbackEnum.delete_meeting: delete_meeting_chose,
+    CallbackEnum.delete_meeting: delete_meeting_choose,
 }
 
 

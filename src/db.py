@@ -1,7 +1,8 @@
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from enum import Enum, auto
 from string import Template
-from typing import Any, AsyncGenerator
+from typing import Any
 
 import redis.asyncio as redis
 from config import settings

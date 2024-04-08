@@ -16,7 +16,7 @@ conv_handler = ConversationHandler(
     states=STATES,  # type: ignore[arg-type]
     fallbacks=[CommandHandler("cancel", cancel)],
 )
-registry = [conv_handler] + commands + callbacks
+registry = [conv_handler, *commands, *callbacks]
 
 
 __all__ = [

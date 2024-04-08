@@ -1,11 +1,15 @@
+from typing import TYPE_CHECKING
+
 from const import GlobalCallbackEnum
 from db import redis_connection
-from extra_types import Callback, DetailedCallback
 from handlers.const import MAIN_MENU_KEYBOARD, CallbackEnum, DetailedCallbackEnum
 from handlers.mappings import get_common_callback, get_detailed_callback
 from telegram import InlineKeyboardMarkup, Update
 from telegram.ext import ContextTypes
 from utils import cast_defaults_callback
+
+if TYPE_CHECKING:
+    from extra_types import Callback, DetailedCallback
 
 
 async def keyboard_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:

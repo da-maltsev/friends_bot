@@ -1,4 +1,5 @@
-from typing import TYPE_CHECKING, Annotated, Callable, Coroutine, NewType
+from collections.abc import Callable, Coroutine
+from typing import TYPE_CHECKING, Annotated, NewType
 from uuid import UUID, uuid4
 
 from pydantic import Field

@@ -19,7 +19,7 @@ class DetailedCallbackEnum(str, Enum):
     delete_meeting_id = auto()
 
 
-MAIN_MENU_KEYBOARD = [
+MAIN_MENU_KEYBOARD: list[list[InlineKeyboardButton]] = [
     [
         InlineKeyboardButton(
             text=callback_type,
