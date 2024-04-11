@@ -17,11 +17,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             text = "Авторизация прошла успешно! Можем продолжать."
             is_logged = True
         else:
-            is_logged = await check_auth(effective_chat.id, redis)
-            if not is_logged:
-                text = "Я бот для друзей. Введи пароль по схеме '/start password', чтобы продолжить."
-            else:
-                text = "Привет! Авторизация уже пройдена, можем продолжить."
+            is_logged = await check_auth(effective_chat.id, message, redis)
 
         new_chat_info = ChatGroup(
             chat_id=effective_chat.id,
@@ -29,7 +25,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         )
         await redis.set(redis_key, new_chat_info.model_dump_json())
 
-    await context.bot.send_message(chat_id=effective_chat.id, text=text)
+    if is_logged:
+        await context.bot.send_message(chat_id=effective_chat.id, text=text)
 
 
 async def help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:

@@ -25,14 +25,15 @@ def cast_defaults_callback(update: Update) -> tuple[Chat, CallbackQuery, Message
     return effective_chat, query, message, data, query.from_user
 
 
-async def check_auth(chat_id: str | int, redis: Redis) -> bool:
+async def check_auth(chat_id: str | int, message: Message, redis: Redis) -> bool:
     from models import ChatGroup
 
     redis_key = get_redis_key(KeysEnum.chat_info, chat_id=chat_id)
     chat_info_raw = await redis.get(redis_key)
-    if not chat_info_raw:
+    if not chat_info_raw or not ChatGroup.model_validate_json(chat_info_raw).is_logged:
+        await message.reply_text("Я бот для друзей. Введи пароль по схеме '/start password', чтобы продолжить.")
         return False
-    return ChatGroup.model_validate_json(chat_info_raw).is_logged
+    return True
 
 
 def safe_str(obj: object, attr: "str") -> str:

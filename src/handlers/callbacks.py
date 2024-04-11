@@ -6,7 +6,7 @@ from handlers.const import MAIN_MENU_KEYBOARD, CallbackEnum, DetailedCallbackEnu
 from handlers.mappings import get_common_callback, get_detailed_callback
 from telegram import InlineKeyboardMarkup, Update
 from telegram.ext import ContextTypes
-from utils import cast_defaults_callback
+from utils import cast_defaults_callback, check_auth
 
 if TYPE_CHECKING:
     from extra_types import Callback, DetailedCallback
@@ -22,8 +22,12 @@ async def keyboard_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) 
             case (GlobalCallbackEnum.main_menu,):
                 await message.edit_text("Что хочешь?", reply_markup=InlineKeyboardMarkup(MAIN_MENU_KEYBOARD))
             case (callback_type,):
-                act: Callback = get_common_callback(CallbackEnum(callback_type))
-                await act(chat, message, user, redis)
+                is_logged = await check_auth(chat.id, message, redis)
+                if is_logged:
+                    act: Callback = get_common_callback(CallbackEnum(callback_type))
+                    await act(chat, message, user, redis)
             case (callback_type, entity_id):
-                detailed_act: DetailedCallback = get_detailed_callback(DetailedCallbackEnum(callback_type))
-                await detailed_act(chat, message, user, redis, entity_id)
+                is_logged = await check_auth(chat.id, message, redis)
+                if is_logged:
+                    detailed_act: DetailedCallback = get_detailed_callback(DetailedCallbackEnum(callback_type))
+                    await detailed_act(chat, message, user, redis, entity_id)
