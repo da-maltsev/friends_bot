@@ -1,7 +1,12 @@
+import locale
+from datetime import datetime
+
 import pytz
 from pydantic import computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pytz.tzinfo import StaticTzInfo
+
+locale.setlocale(locale.LC_TIME, "ru_RU.UTF-8")
 
 
 class Settings(BaseSettings):
@@ -25,6 +30,9 @@ class Settings(BaseSettings):
     @property
     def tz_info(self) -> StaticTzInfo:
         return pytz.timezone("Asia/Yekaterinburg")
+
+    def tz_now(self) -> datetime:
+        return datetime.now(tz=self.tz_info)
 
 
 settings = Settings()  # type: ignore

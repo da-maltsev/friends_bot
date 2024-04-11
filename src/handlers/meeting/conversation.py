@@ -29,7 +29,7 @@ async def add_meeting(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Add
     redis_key = get_redis_key(KeysEnum.new_meeting, chat_id=effective_chat.id)
     new_meeting = Meeting(  # type: ignore[call-arg]
         initiator=Participant.from_user(user),
-        date=datetime.now(tz=settings.tz_info),
+        date=settings.tz_now(),
         title="",
         location=Location(""),
     )
@@ -53,7 +53,7 @@ async def meeting_month(update: Update, context: ContextTypes.DEFAULT_TYPE) -> A
     reply_keyboard = []
     row: list = []
     for month in calendar.month_name[1:]:
-        if datetime.strptime(month, "%B").replace(tzinfo=settings.tz_info).month < datetime.now(tz=settings.tz_info).month:
+        if datetime.strptime(month, "%B").replace(tzinfo=settings.tz_info).month < settings.tz_now().month:
             continue
         if len(row) == 2:
             reply_keyboard.append(row)
@@ -82,17 +82,19 @@ async def meeting_day(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Add
     effective_chat, message, in_text, user = cast_defaults_command(update)
     new_date = datetime.strptime(in_text, "%B").replace(tzinfo=settings.tz_info)
     new_month = new_date.month
-    num_days = calendar.monthrange(datetime.now(tz=settings.tz_info).year, new_month)[1]
+    now = settings.tz_now()
+    num_days = calendar.monthrange(now.year, new_month)[1]
 
     reply_keyboard = []
     row: list = []
     for day in range(1, num_days + 1):
-        if new_month == datetime.now(tz=settings.tz_info).month and day < datetime.now(tz=settings.tz_info).day:
+        if new_month == now.month and day < now.day:
             continue
         if len(row) == 6:
             reply_keyboard.append(row)
             row = []
-        row.append(str(day))
+        day_name = now.replace(day=day).weekday()
+        row.append(f"{day} {day_name}")
     if row:
         reply_keyboard.append(row)
 

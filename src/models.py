@@ -4,7 +4,7 @@ from typing import Annotated, Self
 
 from config import settings
 from extra_types import AutoUUID, Location, Participants
-from pydantic import BaseModel, Field, field_serializer, field_validator
+from pydantic import BaseModel, Field, field_serializer
 from telegram import User
 from utils import safe_str
 
@@ -44,14 +44,6 @@ class Meeting(BaseModel):
     @field_serializer("id")
     def serialize_id(self, value: AutoUUID) -> str:
         return str(value)
-
-    @classmethod
-    @field_validator("date", mode="before")
-    def validate_date(cls, value: datetime) -> datetime:
-        value.replace(tzinfo=settings.tz_info)
-        if value < datetime.now(tz=settings.tz_info):
-            raise ValueError(f"Введена уже прошедшая дата: {value.strftime('%d-%m, %H:%M')}")
-        return value
 
     def as_button(self) -> str:
         location = self.location if self.location else "?"
